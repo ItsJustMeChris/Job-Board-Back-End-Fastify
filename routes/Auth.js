@@ -25,7 +25,7 @@ module.exports = async function (fastify, opts) {
   const { User, SessionToken } = fastify.db.models;
 
   /*
-      @URL /{version}/auth/user/login
+      @URL /{version}/auth/login
       @METHOD POST
       @String Email
       @String Password
@@ -48,7 +48,7 @@ module.exports = async function (fastify, opts) {
     return { status: 'success', message: 'Logged In', token };
   });
   /*
-    @URL /{version}/auth/user/register
+    @URL /{version}/auth/register
     @METHOD POST
     @String Email
     @String Name
@@ -72,7 +72,7 @@ module.exports = async function (fastify, opts) {
     return { status: 'success', message: 'User Created', token };
   });
   /*
-    @URL /{version}/auth/user/logout
+    @URL /{version}/auth/logout
     @METHOD POST
     @String SessionKey
     >Return {status: 'ok'} || {status: 'error', error: 'message'}

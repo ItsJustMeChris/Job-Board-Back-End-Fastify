@@ -15,7 +15,7 @@ fastify.register(fastifySequelize, {
 fastify.register(require('./models/SessionToken'));
 fastify.register(require('./models/User'));
 
-fastify.register(require('./routes/User'), { prefix: '/v1/auth' });
+fastify.register(require('./routes/Auth'), { prefix: '/v1/auth' });
 fastify.register(require('./routes/Job'), { prefix: '/v1/job' });
 fastify.register(require('./routes/Jobs'), { prefix: '/v1/jobs' });
 
