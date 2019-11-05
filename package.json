@@ -1,0 +1,18 @@
+{
+  "name": "job-board-backend",
+  "version": "1.0.0",
+  "description": "Backend server for Job-Board",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "fastify": "^2.10.0",
+    "fastify-sequelize": "^1.0.4",
+    "pg": "^7.12.1",
+    "sequelize": "^5.21.2"
+  }
+}
