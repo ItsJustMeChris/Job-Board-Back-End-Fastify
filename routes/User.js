@@ -34,26 +34,18 @@ module.exports = async function (fastify, opts) {
   fastify.post('/login', async (req, res) => {
     res.type('application/json').code(200);
     const { email, password } = req.body;
-    const user = await User.findOne({
-      where: { email },
-    });
-    if (user) {
-      const auth = await bcrypt.compare(password, user.password);
-      if (!auth) return { status: 'error', message: 'Invalid Password' };
-      let transaction = await fastify.db.transaction();
-      const token = await generateToken();
-      if (token === 0) return { status: 'error', message: '1' };
-      const { ip } = req;
-      const userSession = await SessionToken.create({
-        token,
-        ip,
-      });
-      await transaction.commit();
-      user.addToken(userSession);
-      return { status: 'success', message: 'Logged In', token };
-    } else {
-      return { status: 'error', message: 'Invalid Password' };
-    }
+    const user = await User.findOne({ where: { email } });
+    if (!user) return { status: 'error', message: 'Invalid Password' };
+    const auth = await bcrypt.compare(password, user.password);
+    if (!auth) return { status: 'error', message: 'Invalid Password' };
+    let transaction = await fastify.db.transaction();
+    const token = await generateToken();
+    if (token === 0) return { status: 'error', message: '1' };
+    const { ip } = req;
+    const userSession = await SessionToken.create({ token, ip, });
+    await transaction.commit();
+    user.addToken(userSession);
+    return { status: 'success', message: 'Logged In', token };
   });
   /*
     @URL /{version}/auth/user/register
@@ -65,10 +57,7 @@ module.exports = async function (fastify, opts) {
 */
   fastify.post('/register', async (req, res) => {
     res.type('application/json').code(200);
-    const {
-      email,
-      password,
-    } = req.body;
+    const { email, password } = req.body;
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(password, salt);
     let transaction = await fastify.db.transaction();
