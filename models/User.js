@@ -8,4 +8,6 @@ module.exports = async function (fastify) {
   });
   fastify.db.models.User.hasMany(fastify.db.models.SessionToken, { as: 'token' });
   fastify.db.models.SessionToken.belongsTo(fastify.db.models.User);
+  fastify.db.models.User.hasMany(fastify.db.models.Company, { as: 'company' });
+  fastify.db.models.Company.belongsTo(fastify.db.models.User);
 }
