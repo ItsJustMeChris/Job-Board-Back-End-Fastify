@@ -77,7 +77,12 @@ module.exports = async function (fastify, opts) {
     @String SessionKey
     >Return {status: 'ok'} || {status: 'error', error: 'message'}
 */
-  fastify.post('/logout', async (request, reply) => {
-    return { hello: 'login' }
+  fastify.post('/logout', async (req, res) => {
+    res.type('application/json').code(200);
+    const { token } = req.body;
+    const session = await SessionToken.findOne({ where: { token } });
+    if (!session) return { status: 'error', message: 'An Error Happens' };
+    session.destroy();
+    return { status: 'success', message: 'Logged Out' };
   });
 }
