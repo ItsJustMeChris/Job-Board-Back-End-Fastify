@@ -24,6 +24,7 @@ fastify.register(require('./routes/Auth'), { prefix: '/v1/auth' });
 fastify.register(require('./routes/Job'), { prefix: '/v1/job' });
 fastify.register(require('./routes/Jobs'), { prefix: '/v1/jobs' });
 fastify.register(require('./routes/Company'), { prefix: '/v1/company' });
+fastify.register(require('./routes/Companies'), { prefix: '/v1/companies' });
 
 fastify.setErrorHandler(function (error, req, res) {
   if (error.errors[0].message === 'email must be unique') return res.type('application/json').code(409).send({ status: 'error', message: 'Email already in use.' });
