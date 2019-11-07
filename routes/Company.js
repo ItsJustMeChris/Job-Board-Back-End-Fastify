@@ -1,12 +1,12 @@
 module.exports = async function (fastify, opts) {
   const { Company, SessionToken, User } = fastify.db.models;
   /*
-      @URL /{version}/company/new
-      @METHOD POST
-      @String Name
-      @String Details
-      @SessionToken CompanyOwner
-      >Return {Company}
+    @URL /{version}/company/new
+    @METHOD POST
+    @String Name
+    @String Details
+    @SessionToken CompanyOwner
+    >Return {Company}
   */
   fastify.post('/new', async (req, res) => {
     res.type('application/json').code(200);
@@ -58,12 +58,12 @@ module.exports = async function (fastify, opts) {
     return { status: 'success', message: 'Removed Company' };
   });
   /*
-      @URL /{version}/company/update
-      @METHOD POST
-      @String Name
-      @String Details
-      @SessionToken CompanyOwner
-      >Return {Company}
+    @URL /{version}/company/update
+    @METHOD POST
+    @String Name
+    @String Details
+    @SessionToken CompanyOwner
+    >Return {Company}
   */
   fastify.post('/:companyId/update', async (req, res) => {
     res.type('application/json').code(200);

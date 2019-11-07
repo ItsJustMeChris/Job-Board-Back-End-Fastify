@@ -25,11 +25,11 @@ module.exports = async function (fastify, opts) {
   const { User, SessionToken } = fastify.db.models;
 
   /*
-      @URL /{version}/auth/login
-      @METHOD POST
-      @String Email
-      @String Password
-      >Return {status: 'ok'} || {status: 'error', error: 'message'}
+    @URL /{version}/auth/login
+    @METHOD POST
+    @String Email
+    @String Password
+    >Return {status: 'ok'} || {status: 'error', error: 'message'}
   */
   fastify.post('/login', async (req, res) => {
     res.type('application/json').code(200);

@@ -19,10 +19,10 @@ module.exports = async function (fastify, opts) {
     return jobs;
   });
   /*
-  @URL /{version}/jobs/count
-  @METHOD GET
-  >Return Number TotalJobs
-*/
+    @URL /{version}/jobs/count
+    @METHOD GET
+    >Return Number TotalJobs
+  */
   fastify.get('/count', async (req, res) => {
     const count = await Job.count();
     if (!count) return { status: 'error', message: 'Failed to get count' };
