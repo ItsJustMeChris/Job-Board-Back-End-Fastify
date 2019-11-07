@@ -12,6 +12,8 @@ fastify.register(fastifySequelize, {
   instance: 'db',
   autoConnect: true,
 });
+fastify.register(require('./models/Job'));
+fastify.register(require('./models/Company'));
 fastify.register(require('./models/SessionToken'));
 fastify.register(require('./models/User'));
 
@@ -21,8 +23,9 @@ fastify.register(require('./routes/Jobs'), { prefix: '/v1/jobs' });
 fastify.register(require('./routes/Company'), { prefix: '/v1/company' });
 
 fastify.setErrorHandler(function (error, req, res) {
-  if (error.errors[0].message === 'email must be unique') res.type('application/json').code(409).send({ status: 'error', message: 'Email already in use.' });
-  res.type('application/json').code(500).send({ status: 'error', message: 'Server encountered an error.' });
+  fastify.log.error(error);
+  if (error.errors[0].message === 'email must be unique') return res.type('application/json').code(409).send({ status: 'error', message: 'Email already in use.' });
+  return res.type('application/json').code(500).send({ status: 'error', message: 'Server encountered an error.' });
 })
 
 const start = async () => {
