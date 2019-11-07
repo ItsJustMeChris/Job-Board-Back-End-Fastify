@@ -16,14 +16,14 @@ module.exports = async function (fastify, opts) {
     const { body: { title, description, location, type, token, companyId } } = req;
     const session = await SessionToken.findOne({ where: { token } });
     if (!session) return { status: 'error', message: 'Invalid Session' };
-    const company = await Company.findOne({ where: { companyId, userId: session.userId } });
+    const company = await Company.findOne({ where: { companyId, UserId: session.UserId } });
     if (!company) return { status: 'error', message: 'Failed to create Job' };
     const transaction = await fastify.db.transaction();
     const job = Job.create({ title, description, location, type });
     await transaction.commit();
     if (!job) return { status: 'error', message: 'Failed to create Job' };
     company.addJob(job);
-    return { status: 'success', message: 'Job Created', token };
+    return job;
   });
   /*
     @URL /{version}/job/{jobID}/info
@@ -57,7 +57,7 @@ module.exports = async function (fastify, opts) {
       include: [Company],
     });
     if (!job) return { status: 'error', message: 'Failed to find Job' };
-    if (job.company.userId !== session.userId) return { status: 'error', message: 'User does not have permission.' };
+    if (job.company.UserId !== session.UserId) return { status: 'error', message: 'User does not have permission.' };
     job.destroy();
     return { status: 'success', message: 'Removed Company' };
   });

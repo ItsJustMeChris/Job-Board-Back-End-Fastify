@@ -12,15 +12,15 @@ module.exports = async function (fastify, opts) {
     res.type('application/json').code(200);
     const { token, name } = req.body;
     const session = await SessionToken.findOne({ where: { token } });
-    if (!session) return { status: 'error', message: 'Invalid Session' };
-    const user = User.findOne({ where: { id: session.userId } });
-    if (!user) return { status: 'error', message: 'Invalid Session' };
+    if (!session) return { status: 'error', message: 'Invalid Session Token' };
+    const user = await User.findOne({ where: { id: session.UserId } });
+    if (!user) return { status: 'error', message: 'Failed to find User' };
     const transaction = await fastify.db.transaction();
     const company = await Company.create({ name });
-    if (!company) return { status: 'error', message: 'Failed to register' };
+    if (!company) return { status: 'error', message: 'Failed to create company' };
     await transaction.commit();
-    user.addCompany(userSession);
-    return { status: 'success', message: 'User Created', token };
+    user.addCompany(company);
+    return company;
   });
   /*
     @URL /{version}/company/{companyID}/info
@@ -42,7 +42,8 @@ module.exports = async function (fastify, opts) {
     @METHOD POST
     @String CompanyIdentifier
     @SessionToken Requesting User
-    >Return {Company}
+    >FailReturn {Company}
+    >SuccessReturn []
 */
   fastify.post('/:companyId/remove', async (req, res) => {
     const { params: { companyId }, body: { token } } = req;
@@ -53,9 +54,9 @@ module.exports = async function (fastify, opts) {
       include: [User],
     });
     if (!company) return { status: 'error', message: 'Failed to find company' };
-    if (company.userId !== session.userId) return { status: 'error', message: 'User does not have permission.' };
+    if (company.UserId !== session.UserId) return company;
     company.destroy();
-    return { status: 'success', message: 'Removed Company' };
+    return [];
   });
   /*
     @URL /{version}/company/update
@@ -71,9 +72,9 @@ module.exports = async function (fastify, opts) {
     const session = await SessionToken.findOne({ where: { token } });
     if (!session) return { status: 'error', message: 'Invalid Session' };
     const transaction = await fastify.db.transaction();
-    const company = Company.update({ name }, { where: companyId, userId: session.userId });
+    const company = Company.update({ name }, { where: companyId, UserId: session.UserId });
     await transaction.commit();
-    if (!company) return { status: 'error', message: 'Failed to update company' };
-    return { status: 'success', message: 'Company Updated', token };
+    if (!company) return company;
+    return company;
   });
 }
