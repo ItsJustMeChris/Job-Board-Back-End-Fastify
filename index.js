@@ -18,13 +18,12 @@ fastify.register(require('./models/User'));
 fastify.register(require('./routes/Auth'), { prefix: '/v1/auth' });
 fastify.register(require('./routes/Job'), { prefix: '/v1/job' });
 fastify.register(require('./routes/Jobs'), { prefix: '/v1/jobs' });
+fastify.register(require('./routes/Company'), { prefix: '/v1/company' });
 
 fastify.setErrorHandler(function (error, req, res) {
   if (error.errors[0].message === 'email must be unique') res.type('application/json').code(409).send({ status: 'error', message: 'Email already in use.' });
   res.type('application/json').code(500).send({ status: 'error', message: 'Server encountered an error.' });
 })
-//const transaction = await fastify.db.transaction();
-//await transaction.commit();
 
 const start = async () => {
   try {
