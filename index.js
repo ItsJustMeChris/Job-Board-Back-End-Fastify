@@ -20,7 +20,7 @@ const fastifySequelize = require('fastify-sequelize');
 fastify.register(fastifySequelize, {
   host: process.env.dbhost || 'localhost',
   username: process.env.dbuser || 'dev',
-  database: 'job-board',
+  database: process.env.dbname || 'job-board',
   password: process.env.dbpass || 'dev',
   dialect: 'postgres',
   instance: 'db',
