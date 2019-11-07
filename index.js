@@ -17,6 +17,8 @@ if (process.env.production) {
 
 const fastifySequelize = require('fastify-sequelize');
 
+console.log(process.env);
+
 fastify.register(fastifySequelize, {
   host: process.env.dbhost || 'localhost',
   username: process.env.dbuser || 'dev',
