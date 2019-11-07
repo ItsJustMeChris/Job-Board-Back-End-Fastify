@@ -51,7 +51,7 @@ const start = async () => {
     await fastify.ready();
     await fastify.db.authenticate();
     await fastify.db.sync();
-    await fastify.listen(3000);
+    await fastify.listen(process.env.port);
     fastify.log.info(`server listening on ${fastify.server.address().port}`);
   } catch (err) {
     fastify.log.error(err);
