@@ -1,7 +1,21 @@
-const fastify = require('fastify')({ logger: true });
-const fastifySequelize = require('fastify-sequelize');
+const fs = require('fs');
+let fastify;
+if (process.env.production) {
+  fastify = require('fastify')({
+    logger: true,
+    https: {
+      key: fs.readFileSync('/etc/letsencrypt/live/itsjustmechris.tech/privkey.pem'),
+      cert: fs.readFileSync('/etc/letsencrypt/live/itsjustmechris.tech/fullchain.pem'),
+      ca: fs.readFileSync('/etc/letsencrypt/live/itsjustmechris.tech/chain.pem')
+    }
+  });
+} else {
+  fastify = require('fastify')({
+    logger: true,
+  });
+}
 
-const DETAILED_LOGGING = true;
+const fastifySequelize = require('fastify-sequelize');
 
 fastify.register(fastifySequelize, {
   host: 'localhost',
@@ -39,18 +53,6 @@ const start = async () => {
     await fastify.db.sync();
     await fastify.listen(3000);
     fastify.log.info(`server listening on ${fastify.server.address().port}`);
-
-    console.log(`Test Register should return {status: 'success'}`);
-    console.log(`Test Login should return {status: 'success'}`);
-    console.log(`Test Company should return {Company}`);
-
-    const testRegister = await fastify.inject({ method: 'POST', url: '/v1/auth/register', payload: { email: '1234qwer', password: 'qwer1234' } });
-    const testLogin = await fastify.inject({ method: 'POST', url: '/v1/auth/login', payload: { email: '1234qwer', password: 'qwer1234' } });
-    const testCompany = await fastify.inject({ method: 'POST', url: '/v1/company/new', payload: { name: 'Test2', token: JSON.parse(testLogin.body).token } });
-
-    console.log(`Test Register Result: ${JSON.parse(testRegister.body).status}, ${JSON.parse(testRegister.body).message}`);
-    console.log(`Test Login Result: ${JSON.parse(testLogin.body).status}, ${JSON.parse(testLogin.body).message}`);
-    console.log(`Test Company Result: ${testCompany.body}`);
   } catch (err) {
     fastify.log.error(err);
     process.exit(1);
