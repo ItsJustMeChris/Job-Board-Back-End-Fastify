@@ -18,10 +18,10 @@ if (process.env.production) {
 const fastifySequelize = require('fastify-sequelize');
 
 fastify.register(fastifySequelize, {
-  host: 'localhost',
-  username: 'dev',
+  host: process.env.dbhost || 'localhost',
+  username: process.env.dbuser || 'dev',
   database: 'job-board',
-  password: 'dev',
+  password: process.env.dbpass || 'dev',
   dialect: 'postgres',
   instance: 'db',
   autoConnect: true,
