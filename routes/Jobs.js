@@ -25,7 +25,7 @@ module.exports = async function (fastify, opts) {
   */
   fastify.get('/count', async (req, res) => {
     const count = await Job.count();
-    if (!count) return { status: 'error', message: 'Failed to get count' };
-    return count;
+    if (!count) return { count: 0 };
+    return { count };
   });
 }

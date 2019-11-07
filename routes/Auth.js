@@ -44,7 +44,7 @@ module.exports = async function (fastify, opts) {
     const userSession = await SessionToken.create({ token, ip, });
     await transaction.commit();
     user.addToken(userSession);
-    return { status: 'success', message: 'Logged In', token };
+    return { status: 'success', message: 'Logged In', token, user: user.name };
   });
   /*
     @URL /{version}/auth/register
@@ -56,18 +56,18 @@ module.exports = async function (fastify, opts) {
 */
   fastify.post('/register', async (req, res) => {
     res.type('application/json').code(200);
-    const { ip, body: { email, password } } = req;
+    const { ip, body: { email, password, name } } = req;
     const salt = bcrypt.genSaltSync(10);
     const hash = bcrypt.hashSync(password, salt);
     let transaction = await fastify.db.transaction();
-    const user = await User.create({ email, password: hash });
+    const user = await User.create({ email, password: hash, name });
     if (!user) return { status: 'error', message: 'Failed to register' };
     const token = await generateToken();
     const userSession = await SessionToken.create({ token, ip });
     if (!userSession) return { status: 'error', message: 'Failed to register' };
     await transaction.commit();
     user.addToken(userSession);
-    return { status: 'success', message: 'User Created', token };
+    return { status: 'success', message: 'User Created', token, user: user.name };
   });
   /*
     @URL /{version}/auth/logout

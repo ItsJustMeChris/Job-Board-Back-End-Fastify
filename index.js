@@ -12,6 +12,8 @@ fastify.register(fastifySequelize, {
   instance: 'db',
   autoConnect: true,
 });
+fastify.register(require('fastify-cors'), { origin: '*' });
+
 
 fastify.register(require('./models/Job'));
 fastify.register(require('./models/Company'));
