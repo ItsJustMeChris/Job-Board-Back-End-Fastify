@@ -22,10 +22,10 @@ console.log(process.env.dbhost, process.env.dbuser,
   process.env.dbpass);
 
 fastify.register(fastifySequelize, {
-  host: process.env.dbhost || 'localhost',
-  username: process.env.dbuser || 'dev',
-  database: process.env.dbname || 'job-board',
-  password: process.env.dbpass || 'dev',
+  host: process.env.dbhost,
+  username: process.env.dbuser,
+  database: process.env.dbname,
+  password: process.env.dbpass,
   dialect: 'postgres',
   instance: 'db',
   autoConnect: true,
