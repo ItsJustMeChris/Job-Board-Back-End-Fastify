@@ -22,10 +22,10 @@ module.exports = async function (fastify, opts) {
     if (!session) return { status: 'error', message: 'Invalid Session Token' };
     const user = await User.findOne({ where: { id: session.UserId } });
     if (!user) return { status: 'error', message: 'Failed to find User' };
-    const transaction = await fastify.db.transaction();
+    res.transaction = await fastify.db.transaction();
     const company = await Company.create({ name, description: cleanDescription, image });
     if (!company) return { status: 'error', message: 'Failed to create company' };
-    await transaction.commit();
+    await res.transaction.commit();
     user.addCompany(company);
     return company;
   });
@@ -78,9 +78,9 @@ module.exports = async function (fastify, opts) {
     const { token, name } = req.body;
     const session = await SessionToken.findOne({ where: { token } });
     if (!session) return { status: 'error', message: 'Invalid Session' };
-    const transaction = await fastify.db.transaction();
+    res.transaction = await fastify.db.transaction();
     const company = Company.update({ name }, { where: companyId, UserId: session.UserId });
-    await transaction.commit();
+    await res.transaction.commit();
     if (!company) return company;
     return company;
   });

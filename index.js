@@ -41,6 +41,7 @@ fastify.register(require('./routes/Company'), { prefix: '/v1/company' });
 fastify.register(require('./routes/Companies'), { prefix: '/v1/companies' });
 
 fastify.setErrorHandler(function (error, req, res) {
+  if (res.transaction) res.transaction.rollback();
   if (error.errors && error.errors[0].message === 'email must be unique') return res.type('application/json').code(409).send({ status: 'error', message: 'Email already in use.' });
   fastify.log.error(error);
   return res.type('application/json').code(500).send({ status: 'error', message: 'Server encountered an error.' });

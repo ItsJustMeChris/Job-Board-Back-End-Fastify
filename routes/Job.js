@@ -1,5 +1,7 @@
 module.exports = async function (fastify, opts) {
   const { Company, SessionToken, User, Job } = fastify.db.models;
+  const sanitizeHtml = require('sanitize-html');
+
   /*
     @URL /{version}/job/new
     @METHOD POST
@@ -14,13 +16,18 @@ module.exports = async function (fastify, opts) {
   fastify.post('/new', async (req, res) => {
     res.type('application/json').code(200);
     const { body: { title, description, location, type, token, CompanyId } } = req;
+    const cleanDescription = sanitizeHtml(description, {
+      allowedTags: ['h2', 'h1', 'h3', 'h4', 'h5', 'h6', 'blockquote', 'p', 'a', 'ul', 'ol',
+        'nl', 'li', 'b', 'i', 'strong', 'em', 'strike', 'code', 'hr', 'br', 'div',
+        'table', 'thead', 'caption', 'tbody', 'tr', 'th', 'td', 'pre', 'iframe', 'img'],
+    });
     const session = await SessionToken.findOne({ where: { token } });
     if (!session) return { status: 'error', message: 'Invalid Session' };
     const company = await Company.findOne({ where: { id: CompanyId, UserId: session.UserId } });
     if (!company) return { status: 'error', message: 'Failed to create Job' };
-    const transaction = await fastify.db.transaction();
-    const job = await Job.create({ title, description, location, type });
-    await transaction.commit();
+    res.transaction = await fastify.db.transaction();
+    const job = await Job.create({ title, description: cleanDescription, location, type });
+    await res.transaction.commit();
     if (!job) return { status: 'error', message: 'Failed to create Job' };
     company.addJob(job);
     return job;
