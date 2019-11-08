@@ -1,5 +1,5 @@
 module.exports = async function (fastify, opts) {
-  const { Company } = fastify.db.models;
+  const { Company, User } = fastify.db.models;
   /*
     @URL /{version}/companies/all[/page]
     @METHOD GET
@@ -13,6 +13,22 @@ module.exports = async function (fastify, opts) {
       limit: 50,
       offset: 50 * page,
       order: [['updatedAt', 'DESC']],
+    });
+    if (!companies) return { satus: 'error', message: 'Failed to fetch companies.' };
+    return companies;
+  });
+  /*
+    @URL /{version}/companies/all[/page]
+    @METHOD GET
+    [@Number Page]
+    >Return [{JobObject},{JobObject}]
+  */
+  fastify.get('/user/:UserId', async (req, res) => {
+    res.type('application/json').code(200);
+    const { UserId } = req.params;
+    const companies = await Company.findAll({
+      where: { UserId },
+      include: [{ model: User, attributes: ['id', 'name'] }],
     });
     if (!companies) return { satus: 'error', message: 'Failed to fetch companies.' };
     return companies;

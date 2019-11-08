@@ -17,15 +17,11 @@ if (process.env.production) {
 
 const fastifySequelize = require('fastify-sequelize');
 
-console.log(process.env.dbhost, process.env.dbuser,
-  process.env.dbname,
-  process.env.dbpass);
-
 fastify.register(fastifySequelize, {
-  host: process.env.dbhost,
-  username: process.env.dbuser,
-  database: process.env.dbname,
-  password: process.env.dbpass,
+  host: process.env.dbhost || 'localhost',
+  username: process.env.dbuser || 'dev',
+  database: process.env.dbname || 'job-board',
+  password: process.env.dbpass || 'dev',
   dialect: 'postgres',
   instance: 'db',
   autoConnect: true,
@@ -45,7 +41,7 @@ fastify.register(require('./routes/Company'), { prefix: '/v1/company' });
 fastify.register(require('./routes/Companies'), { prefix: '/v1/companies' });
 
 fastify.setErrorHandler(function (error, req, res) {
-  if (error.errors[0].message === 'email must be unique') return res.type('application/json').code(409).send({ status: 'error', message: 'Email already in use.' });
+  if (error.errors && error.errors[0].message === 'email must be unique') return res.type('application/json').code(409).send({ status: 'error', message: 'Email already in use.' });
   fastify.log.error(error);
   return res.type('application/json').code(500).send({ status: 'error', message: 'Server encountered an error.' });
 })
@@ -55,7 +51,7 @@ const start = async () => {
     await fastify.ready();
     await fastify.db.authenticate();
     await fastify.db.sync();
-    await fastify.listen(process.env.port);
+    await fastify.listen(process.env.port || 3000);
     fastify.log.info(`server listening on ${fastify.server.address().port}`);
   } catch (err) {
     fastify.log.error(err);

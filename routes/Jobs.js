@@ -1,5 +1,5 @@
 module.exports = async function (fastify, opts) {
-  const { Job } = fastify.db.models;
+  const { Job, Company } = fastify.db.models;
   /*
     @URL /{version}/jobs/all[/page]
     @METHOD GET
@@ -13,7 +13,7 @@ module.exports = async function (fastify, opts) {
       limit: 50,
       offset: 50 * page,
       order: [['updatedAt', 'DESC']],
-      include: [User],
+      include: [Company],
     });
     if (!jobs) return { satus: 'error', message: 'Failed to fetch jobs.' };
     return jobs;

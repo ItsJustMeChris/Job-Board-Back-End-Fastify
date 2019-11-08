@@ -44,7 +44,7 @@ module.exports = async function (fastify, opts) {
     const userSession = await SessionToken.create({ token, ip, });
     await transaction.commit();
     user.addToken(userSession);
-    return { status: 'success', message: 'Logged In', token, user: user.name };
+    return { status: 'success', message: 'Logged In', token, user: { name: user.name, id: user.id } };
   });
   /*
     @URL /{version}/auth/register
@@ -67,7 +67,7 @@ module.exports = async function (fastify, opts) {
     if (!userSession) return { status: 'error', message: 'Failed to register' };
     await transaction.commit();
     user.addToken(userSession);
-    return { status: 'success', message: 'User Created', token, user: user.name };
+    return { status: 'success', message: 'User Created', token, user: { name: user.name, id: user.id } };
   });
   /*
     @URL /{version}/auth/logout

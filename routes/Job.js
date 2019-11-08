@@ -13,13 +13,13 @@ module.exports = async function (fastify, opts) {
   */
   fastify.post('/new', async (req, res) => {
     res.type('application/json').code(200);
-    const { body: { title, description, location, type, token, companyId } } = req;
+    const { body: { title, description, location, type, token, CompanyId } } = req;
     const session = await SessionToken.findOne({ where: { token } });
     if (!session) return { status: 'error', message: 'Invalid Session' };
-    const company = await Company.findOne({ where: { companyId, UserId: session.UserId } });
+    const company = await Company.findOne({ where: { id: CompanyId, UserId: session.UserId } });
     if (!company) return { status: 'error', message: 'Failed to create Job' };
     const transaction = await fastify.db.transaction();
-    const job = Job.create({ title, description, location, type });
+    const job = await Job.create({ title, description, location, type });
     await transaction.commit();
     if (!job) return { status: 'error', message: 'Failed to create Job' };
     company.addJob(job);
