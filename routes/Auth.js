@@ -57,8 +57,8 @@ module.exports = async function (fastify, opts) {
   fastify.post('/register', async (req, res) => {
     res.type('application/json').code(200);
     const { ip, body: { email, password, name } } = req;
-    const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync(password, salt);
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(password, salt);
     res.transaction = await fastify.db.transaction();
     const user = await User.create({ email, password: hash, name });
     if (!user) return { status: 'error', message: 'Failed to register' };

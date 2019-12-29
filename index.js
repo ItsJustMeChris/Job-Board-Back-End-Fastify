@@ -28,7 +28,6 @@ fastify.register(fastifySequelize, {
 });
 fastify.register(require('fastify-cors'), { origin: '*' });
 
-
 fastify.register(require('./models/Job'));
 fastify.register(require('./models/Company'));
 fastify.register(require('./models/SessionToken'));
